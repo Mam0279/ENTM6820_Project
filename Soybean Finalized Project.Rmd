@@ -1,0 +1,235 @@
+---
+title: "Soybean Project Code"
+author: "Alec"
+date: "2023-04-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+1st Virus Table
+```{r}
+library(gt)
+
+# Creating dataframe
+Soy1DF <- data.frame(
+  Virus = c("SVNV", "SMV", "BPMV", "TSV"),
+  Old_Rotation = c("Not Detected", "Not Detected", "Not Detected", "Not detected"),
+  Cullars_Rotation = c("Not Detected", "Detected", "Not Detected", "Not Detected"),
+  EV_Smith = c("Not Detected", "Detected", "Not Detected", "Not Detected"),
+  Tennessee_Valley = c("Not Detected", "Not Detected", "Detected", "Not Detected"),
+  Sand_Mountain = c("Detected", "Not Detected", "Not Detected", "Not Detected"),
+  Clanton = c("Not Detected", "Not Detected", "Not Detected", "Not Detected")
+) 
+
+# Making dataframe into gt table
+SoyData1_table <- gt(Soy1DF)
+
+# Table header
+SoyData1_table <- 
+  SoyData1_table %>%
+  tab_header(
+    title = md("Soybean Virus 1st Collection")
+
+# Display the table
+SoyData1_table
+
+```
+
+2nd Virus Table
+```{r}
+library(gt)
+library(deplyr)
+
+# Creating dataframe
+Soy2DF <- data.frame(
+  Virus = c("SVNV", "SMV", "BPMV", "TSV"),
+  Old_Rotation = c("Detected", "Detected", "Detected", "Not detected"),
+  Cullars_Rotation = c("Detected", "Not Detected", "Detected", "Detected"),
+  EV_Smith = c("Detected", "Detected", "Detected", "Not Detected"),
+  Tennessee_Valley = c("Detected", "Detected", "Not Detected", "Detected"),
+  Sand_Mountain = c("Not Detected", "Detected", "Not Detected", "Detected"),
+  Clanton = c("Not Detected", "Not Detected", "Not Detected", "Not Detected")
+) 
+
+
+# Making dataframe into gt table
+SoyData2_table <- gt(Soy2DF)
+
+# Table header
+SoyData2_table <- 
+  SoyData2_table %>%
+  tab_header(
+    title = md("Soybean Virus 2nd Collection")
+  )
+
+# Display
+SoyData2_table
+
+```
+
+
+Starting with the bug data
+```{r}
+#First I take my data and put it in long format by melting it
+library(ggplot2)
+library(readxl)
+library(scales)
+library(tidyverse)
+library(reshape2)
+
+BugData1 <- read_excel("C:/Users/mam0279/Documents/ENTM6820/Bug1.xlsx")
+
+BugData1_melt <- melt(BugData1, id.vars = "Insects")
+
+BugData2 <- read_excel("C:/Users/mam0279/Documents/ENTM6820/Bug2.xlsx")
+
+BugData2_melt <- melt(BugData2, id.vars = "Insects")
+
+```
+
+BugData1 with numbers
+```{r}
+ggplot(BugData1_melt, aes(x = variable, y = value, fill = Insects)) + 
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9), width = 0.7, color = "black") +
+  geom_text(aes(label=value, group=Insects), 
+            position=position_dodge(width = 0.9), 
+            vjust=-0.5, size=3) +
+    theme(axis.text.x = element_text(angle = 45, hjust = .4, vjust = 0.5, size = 8, ),
+        axis.text.y = element_text(size = 12)) +
+  labs(title = "2021 First Soybean Sampling Data",
+       x = "Location Collected",
+       y = "Number of Insects Collected") +
+  scale_fill_manual(values = c("#E69F00", "#999999", "#0072B2")) +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom") +
+  guides(fill=guide_legend(nrow=1)) +
+ coord_cartesian(ylim = c(0, 650)) +
+  theme(panel.spacing = unit(2, "lines"))
+
+```
+
+
+BugData2 with numbers
+```{r}
+ggplot(BugData2_melt, aes(x = variable, y = value, fill = Insects)) + 
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9), width = 0.7, color = "black") +
+  geom_text(aes(label=value, group=Insects), 
+            position=position_dodge(width = 0.9), 
+            vjust=-0.5, size=3) +
+    theme(axis.text.x = element_text(angle = 45, hjust = .4, vjust = 0.5, size = 8, ),
+        axis.text.y = element_text(size = 12)) +
+  labs(title = "2021 Second Soybean Sampling Data",
+       x = "Location Collected",
+       y = "Number of Insects Collected") +
+  scale_fill_manual(values = c("#E69F00", "#999999", "#0072B2")) +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom") +
+  guides(fill=guide_legend(nrow=1)) +
+ coord_cartesian(ylim = c(0, 200)) +
+  theme(panel.spacing = unit(2, "lines"))
+
+```
+
+Making BugData1 with NO Total = TotalGone1
+```{r}
+#Filtering out the "Total" variables
+BugData1 <- read_excel("C:/Users/mam0279/Documents/ENTM6820/Bug2.xlsx")
+
+BugData1_melt <- melt(BugData1, id.vars = "Insects")
+
+TotalGone1 <- BugData1_melt %>% 
+  filter(variable !="Total")
+
+```
+
+TotalGone1 graph
+```{r}
+#Basically same graph, but with the "Total" filtered out
+ggplot(TotalGone1, aes(x = variable, y = value, fill = Insects)) + 
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9), width = 0.7, color = "black") +
+  geom_text(aes(label=value, group=Insects), 
+            position=position_dodge(width = 0.9), 
+            vjust=-0.5, size=3) +
+    theme(axis.text.x = element_text(angle = 45, hjust = .4, vjust = 0.5, size = 8, ),
+        axis.text.y = element_text(size = 12)) +
+  labs(title = "2021 First Soybean Sampling Data",
+       x = "Location Collected",
+       y = "Number of Insects Collected") +
+  scale_fill_manual(values = c("#E69F00", "#999999", "#0072B2")) +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom") +
+  guides(fill=guide_legend(nrow=1)) +
+ coord_cartesian(ylim = c(0, 250)) +
+  theme(panel.spacing = unit(2, "lines"))
+```
+
+Making BugData2 with NO Total = TotalGone2
+```{r}
+
+BugData2 <- read_excel("C:/Users/mam0279/Documents/ENTM6820/Bug2.xlsx")
+
+BugData2_melt <- melt(BugData2, id.vars = "Insects")
+
+TotalGone2 <- BugData2_melt %>% 
+  filter(variable !="Total")
+
+```
+
+TotalGone2 graph
+```{r}
+
+ggplot(TotalGone2, aes(x = variable, y = value, fill = Insects)) + 
+  geom_bar(stat = "identity", position = position_dodge(width = 0.9), width = 0.7, color = "black") +
+  geom_text(aes(label=value, group=Insects), 
+            position=position_dodge(width = 0.9), 
+            vjust=-0.5, size=3) +
+    theme(axis.text.x = element_text(angle = 45, hjust = .4, vjust = 0.5, size = 8, ),
+        axis.text.y = element_text(size = 12)) +
+  labs(title = "2021 Second Soybean Sampling Data",
+       x = "Location Collected",
+       y = "Number of Insects Collected") +
+  scale_fill_manual(values = c("#E69F00", "#999999", "#0072B2")) +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom") +
+  guides(fill=guide_legend(nrow=1)) +
+ coord_cartesian(ylim = c(0, 120)) +
+  theme(panel.spacing = unit(2, "lines"))
+```
+
+StackGraph1
+```{r}
+ggplot(TotalGone1, aes(x = variable, y = value, fill = Insects)) + 
+  geom_bar(stat = "identity", position ="stack") +
+  theme(axis.text.x = element_text(angle = 45, hjust = .4, vjust = 0.5, size = 8, ),
+        axis.text.y = element_text(size = 12)) +
+  labs(title = "2021 First Soybean Sampling Data",
+       x = "Location Collected",
+       y = "Number of Insects Collected") +
+  scale_fill_manual(values = c("#E69F00", "#000000", "#0072B2")) +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom") +
+  guides(fill=guide_legend(nrow=1)) +
+ #coord_cartesian(ylim = c(0, 200)) +
+  theme(panel.spacing = unit(2, "lines"))
+```
+
+StackGraph2
+```{r}
+ggplot(TotalGone2, aes(x = variable, y = value, fill = Insects)) + 
+  geom_bar(stat = "identity", position ="stack") +
+  theme(axis.text.x = element_text(angle = 45, hjust = .4, vjust = 0.5, size = 8, ),
+        axis.text.y = element_text(size = 12)) +
+  labs(title = "2021 Second Soybean Sampling Data",
+       x = "Location Collected",
+       y = "Number of Insects Collected") +
+  scale_fill_manual(values = c("#E69F00", "#000000", "#0072B2")) +
+  theme(plot.title = element_text(hjust = 0.5),
+        legend.position = "bottom") +
+  guides(fill=guide_legend(nrow=1)) +
+ #coord_cartesian(ylim = c(0, 200)) +
+  theme(panel.spacing = unit(2, "lines"))
+```
